@@ -33,3 +33,11 @@ model Poll{
   creatorId     Int
   options       PollOption[]
 }
+
+model PollOption{
+  id            Int    
+  text          String
+  poll          Poll          @relation(fields: [pollId], references: [id])
+  pollId        Int
+  votes         Vote[]        
+}
