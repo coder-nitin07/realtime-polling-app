@@ -1,4 +1,5 @@
 const prisma = require('../config/prisma');
+const { io } = require('../server');  
 
 // create poll
 const createPoll = async (req, res)=>{
@@ -73,6 +74,20 @@ const updatePoll = async (req, res)=>{
                 }
             },
             include: { options: true }
+        });
+
+        // prepare results for socket
+        const results = updatedPoll.options.map(opt => ({
+            id: opt.id,
+            text: opt.text,
+            votes: opt.votes.length
+        }));
+
+        // emit to all clients in this poll room
+        io.to(`poll_${pollId}`).emit('pollUpdated', {
+            pollId,
+            question: updatedPoll.question,
+            options: results
         });
 
         res.status(200).json({ message: 'Poll updated successfully', poll: updatedPoll });
@@ -150,6 +165,9 @@ const deletePollById = async (req, res)=>{
         if(!getPoll){
             return res.status(404).json({ message: 'Poll not found' });
         }
+
+        // broadcast poll deleted event
+        io.to(`poll_${pollId}`).emit('pollDeleted', { pollId });
 
         res.status(200).json({ message: 'Poll Deleted Successfully', poll: getPoll });
     } catch (err) {

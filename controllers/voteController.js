@@ -1,4 +1,5 @@
 const prisma = require('../config/prisma');
+const io = require('../server');
 
 // vote on poll
 const voteOnPoll = async (req, res)=>{
@@ -46,6 +47,25 @@ const voteOnPoll = async (req, res)=>{
                 userId,
                 pollOptionId: optionId
             }
+        });
+
+        // fetch updated poll results
+        const updatedPoll = await prisma.poll.findUnique({
+            where: { id: pollId },
+            include: { options: { include: { votes: true } } }
+        });
+
+        const results = updatedPoll.options.map(opt => ({
+            id: opt.id,
+            text: opt.text,
+            votes: opt.votes.length
+        }));
+
+        // 👇 emit updated results
+        io.to(`poll_${pollId}`).emit('pollUpdated', {
+            pollId,
+            question: updatedPoll.question,
+            options: results
         });
 
         res.status(201).json({ message: 'Vote recorded Successfully', vote: userVote });

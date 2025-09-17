@@ -18,6 +18,12 @@ const io = new Server(server, {
 io.on('connection', (scoket)=>{
     console.log('New client connected:', socket.id);
 
+    // Poll event
+    socket.on('joinPoll', (pollId) => {
+        socket.join(`poll_${pollId}`);
+        console.log(`Client ${socket.id} joined poll_${pollId}`);
+    });
+
     socket.on('disconnect', () => {
         console.log('Client disconnected:', socket.id);
     });
