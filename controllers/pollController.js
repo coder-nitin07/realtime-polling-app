@@ -83,7 +83,7 @@ const updatePoll = async (req, res)=>{
 };
 
 // get polls
-const getPoll = async (req, res)=>{
+const getAllPoll = async (req, res)=>{
     try {
         const userId = req.user.userId;
 
@@ -101,4 +101,33 @@ const getPoll = async (req, res)=>{
     }
 };
 
-module.exports = { createPoll, updatePoll, getPoll };
+// get poll by id
+const getPollById = async (req, res)=>{
+    try {
+        const pollId = parseInt(req.params.id);
+        if(!pollId){
+            return res.status(404).json({ message: 'Invalid Poll Id' });
+        }
+
+        const getPoll = await prisma.poll.findFirst({
+            where: { id: pollId },
+            include: {
+                options: {
+                    include: {
+                        votes: true
+                    }
+                }
+            }
+        });
+        if(!getPoll){
+            return res.status(404).json({ message: 'Poll not found' });
+        }
+
+        res.status(200).json({ message: 'Poll Fetched Successfully', poll: getPoll });
+    } catch (err) {
+        console.log('Server error', err);
+        res.status(500).json({ message: 'Something went wrong' });
+    }
+};
+
+module.exports = { createPoll, updatePoll, getAllPoll, getPollById };
