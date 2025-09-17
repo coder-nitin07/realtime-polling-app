@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const prisma = require('./config/prisma');
 const { authRouter } = require('./routes/authRoutes');
+require('./utils/removeExpiredTokens');
 require('dotenv').config();
 
 // json middleware

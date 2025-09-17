@@ -75,4 +75,24 @@ const login = async (req, res)=>{
     }
 };
 
-module.exports = { register, login };
+// logout API
+const logout = async (req, res)=>{
+    try {
+        const token = req.token;
+        const exp = req.user.exp;
+
+        await prisma.blacklistedToken.create({
+            data: {
+                token,
+                expiresAt: new Date(exp * 1000)
+            }
+        });
+
+        res.status(200).json({ message: 'Logged Out Successfully', token })
+    } catch (err) {
+        console.log('Server error', err);
+        res.status(500).json({ message: 'Something went wrong' });
+    }
+};
+
+module.exports = { register, login, logout };
