@@ -130,4 +130,32 @@ const getPollById = async (req, res)=>{
     }
 };
 
-module.exports = { createPoll, updatePoll, getAllPoll, getPollById };
+// delete Poll by ID
+const deletePollById = async (req, res)=>{
+    try {
+        const pollId = parseInt(req.params.id);
+        if(isNaN(pollId)){
+            return res.status(404).json({ message: 'Invalid Poll Id' });
+        }
+
+        // deleted poll options
+        await prisma.pollOption.deleteMany({
+            where: { pollId: pollId }
+        });
+
+        // delete poll
+        const getPoll = await prisma.poll.delete({
+            where: { id: pollId }
+        });
+        if(!getPoll){
+            return res.status(404).json({ message: 'Poll not found' });
+        }
+
+        res.status(200).json({ message: 'Poll Deleted Successfully', poll: getPoll });
+    } catch (err) {
+        console.log('Server error', err);
+        res.status(500).json({ message: 'Something went wrong' });
+    }
+};
+
+module.exports = { createPoll, updatePoll, getAllPoll, getPollById, deletePollById };
