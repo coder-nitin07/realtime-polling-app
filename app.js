@@ -29,7 +29,4 @@ app.get('/', (req, res)=>{
     res.send('RealTime Polling Application');
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, ()=>{
-    console.log('Server is running on PORT ', PORT);
-});
+module.exports = app;
