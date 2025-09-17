@@ -3,6 +3,7 @@ const app = express();
 const prisma = require('./config/prisma');
 const { authRouter } = require('./routes/authRoutes');
 const { pollRouter } = require('./routes/pollRoutes');
+const { voteRouter } = require('./routes/voteRoutes');
 require('./utils/removeExpiredTokens');
 require('dotenv').config();
 
@@ -22,6 +23,7 @@ app.use(express.json());
 // routes
 app.use('/auth', authRouter);
 app.use('/poll', pollRouter );
+app.use('/vote', voteRouter );
 
 app.get('/', (req, res)=>{
     res.send('RealTime Polling Application');
