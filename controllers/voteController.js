@@ -55,6 +55,4 @@ const voteOnPoll = async (req, res)=>{
     }
 };
 
-
-
 module.exports = { voteOnPoll };
