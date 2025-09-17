@@ -82,4 +82,23 @@ const updatePoll = async (req, res)=>{
     }
 };
 
-module.exports = { createPoll, updatePoll };
+// get polls
+const getPoll = async (req, res)=>{
+    try {
+        const userId = req.user.userId;
+
+        const getAllPolls = await prisma.poll.findMany({
+            where: { creatorId: userId }
+        });
+        if(getAllPolls.length === 0){
+            return res.status(404).json({ message: 'No Poll Found' });
+        }
+
+        res.status(200).json({ message: 'Poll Fetched Successfully', polls: getAllPolls });
+    } catch (err) {
+        console.log('Server error', err);
+        res.status(500).json({ message: 'Something went wrong' });
+    }
+};
+
+module.exports = { createPoll, updatePoll, getPoll };
