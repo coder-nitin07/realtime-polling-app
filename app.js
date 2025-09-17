@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const prisma = require('./config/prisma');
+const { authRouter } = require('./routes/authRoutes');
 require('dotenv').config();
 
 // json middleware
@@ -15,6 +16,9 @@ app.use(express.json());
         console.log('Prisma Connetion Failed', err);
     }
 })();
+
+// routes
+app.use('/auth', authRouter);
 
 app.get('/', (req, res)=>{
     res.send('RealTime Polling Application');
