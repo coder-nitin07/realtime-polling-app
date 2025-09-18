@@ -40,8 +40,5 @@ package-lock.json
 yarn.lock
 pnpm-lock.yaml
 
-# Personal files
-project_documentation.md
-project_steps.md
+# files
 /generated/prisma
-project_flow.md
